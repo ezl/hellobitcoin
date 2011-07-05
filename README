@@ -1,0 +1,49 @@
+username = "foo"
+passwd = "bar"
+
+# Instantiate the object with username and pass
+# Username and pass are optional if you only want to use unauthenticated
+# requests. You can authenticate later with cls.authenticate(username, passwd)
+# if you leave it out here.
+hello = HelloBitcoin(username, passwd)
+
+# Authenticate
+# the authenticate() method returns the auth_token needed for all authenticated
+# queries.  It also saves it to the object for you so you don't have to
+# save it
+auth_token = hello.authenticate()
+
+# Create an order
+my_order_id = hello.new(quantity=11, price=12.65, side="bid", contract_id="BTC_USD")
+# Returns an order_id on success or False on failure. You'll need the order ID
+# to cancel requests
+
+# View open orders
+# get_open_orders() method returns a list of dicts representing individual
+# orders.  Each such dict contains:
+#               information order_id, price, side, quantity, status
+list_of_dicts = hello.get_open_orders()
+# The Hello Bitcoin API requires an auth token for this query, but since
+# the auth methods just use the value stored in the object, we don't supply it
+
+# Cancel order
+# Cancellation attempts return True on success and False on failure
+hello.cancel(order_id=my_order_id, contract_id="BTC_USD")
+
+# Cancel all orders
+hello.cancelall()
+# The Hello Bitcoin API requires an auth token for this query, but since
+# the auth methods just use the value stored in the object, we don't supply it
+
+
+# We can also request public data
+
+hello.historical()
+# Returns a csv of recent trades and timestamps (Time and Sales)
+
+hello.orderbook()
+# Returns a list of dicts, where each dict contains information about a level
+# in the order book: side (bid or ask), price, quantity
+
+hello.snapshot()
+returns a dict with keys: bid, offer, last, timestamp
