@@ -123,11 +123,25 @@ class HelloBitcoin(object):
     @authentication_required
     def get_open_orders(self):
         """Get open orders.
+
+        Deprecated method. Don't use me.
         """
 
         api = "api/order/open"
         postdict = dict(auth_token=self.auth_token)
         return self._curl(api=api, postdict=postdict)
+
+    @authentication_required
+    def get_orders(self, status=None):
+        if status == None:
+            status = "Open"
+        api = "api/order/list"
+        postdict = {
+            'status': status,
+            'auth_token': self.auth_token
+            }
+        response = self._curl(api=api, postdict=postdict)
+        return response
 
 
     BASE_URL = "https://hellobitcoin.com/"
@@ -140,6 +154,7 @@ class HelloBitcoin(object):
             request = urllib2.Request(url)
         response = urllib2.urlopen(request, timeout=timeout)
         body = response.read()
+        print body
         if responseformat == "json":
             return json.loads(body)
         elif responseformat == "csv":
@@ -193,3 +208,6 @@ if __name__ == "__main__":
     print hello.snapshot()
     print "a top of book snapshot"
     print
+
+    print hello.get_orders(status="Open")
+    print hello.get_orders(status="Cancelled")
